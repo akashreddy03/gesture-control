@@ -30,8 +30,6 @@ class GestureCapture:
 
     def update_guesture_and_call_controller(self, result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
 
-        self.frame_no += 1
-
         if(not result.gestures):
             print("NO RESULT")
             return
@@ -53,9 +51,10 @@ class GestureCapture:
 
         with GestureRecognizer.create_from_options(self.options) as recognizer:
         
-            while(self.cap.isOpened()): 
+            while(True): 
                 
                 success, frame = self.cap.read() 
+                self.frame_no += 1
 
                 if not success:
                     print("Empty Frame")

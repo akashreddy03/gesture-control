@@ -1,5 +1,5 @@
 from Gestures import Gesture
-# from pyautogui import press
+from pyautogui import press
 
 class Controller:
 
