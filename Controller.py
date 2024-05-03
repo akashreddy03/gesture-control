@@ -1,5 +1,6 @@
 from Gestures import Gesture
 import keyboard
+import pyautogui
 
 class Controller:
 
@@ -9,7 +10,10 @@ class Controller:
 
     def stop_yt_video(self):
         keyboard.press_and_release('space')
-    
+    def volumeup_video(self):
+        pyautogui.press('volumeup')
+    def volumedown_video(self):
+        pyautogui.press('volumedown')
     def handle(self, gest: Gesture, timestamp: int):
 
         if(timestamp - self.action_timestamp < 40):
@@ -21,7 +25,10 @@ class Controller:
 
             case Gesture.CLOSED_FIST:
                 self.stop_yt_video()
-
+            case Gesture.THUMB_UP:
+                self.volumeup_video()
+            case Gesture.THUMB_DOWN:
+                self.volumedown_video()
             case _:
                 print("THIS ACTION DOESN'T EXIST")
         
