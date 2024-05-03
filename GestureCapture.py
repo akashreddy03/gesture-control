@@ -77,8 +77,8 @@ class GestureCapture:
                     solutions.drawing_utils.draw_landmarks( # type: ignore
                         annotated_image,
                         hand_landmarks_proto,
-                        solutions.hands.HAND_CONNECTIONS, # type: ignore
-                        solutions.drawing_styles.get_default_hand_landmarks_style(), # type: ignore
+                        solutions.hands.HAND_CONNECTIONS,  # type: ignore
+                        solutions.drawing_styles.get_default_hand_landmarks_style(),  # type: ignore
                         solutions.drawing_styles.get_default_hand_connections_style()) # type: ignore
                             
                 cv2.imshow('Output', annotated_image)

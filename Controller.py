@@ -12,14 +12,14 @@ class Controller:
         keyboard.press_and_release('space')
         
     def volumeup_video(self):
-        pyautogui.press('volumeup')
+        keyboard.press_and_release('volumeup')
     def volumedown_video(self):
-        pyautogui.press('volumedown')
+        keyboard.press_and_release('volumedown')
         
     def forward_video(self):
-        pyautogui.press('right')
+        keyboard.press_and_release('right')
     def backward_video(self):
-        pyautogui.press('left')
+        keyboard.press_and_release('left')
         
         
     def handle(self, gest: Gesture, timestamp: int):
