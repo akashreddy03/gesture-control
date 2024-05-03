@@ -12,9 +12,9 @@ class Controller:
         keyboard.press_and_release('space')
         
     def volumeup_video(self):
-        keyboard.press_and_release('volumeup')
+        keyboard.press_and_release('volume up')
     def volumedown_video(self):
-        keyboard.press_and_release('volumedown')
+        keyboard.press_and_release('volume down')
         
     def forward_video(self):
         keyboard.press_and_release('right')
