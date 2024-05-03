@@ -3,12 +3,14 @@ import cv2
 import os
 from Controller import Controller
 from Gestures import Gesture
+from mediapipe.framework.formats import landmark_pb2
 
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
 GestureRecognizerOptions = mp.tasks.vision.GestureRecognizerOptions
 GestureRecognizerResult = mp.tasks.vision.GestureRecognizerResult
 VisionRunningMode = mp.tasks.vision.RunningMode
+solutions = mp.solutions
 
 class GestureCapture:
 
@@ -23,12 +25,16 @@ class GestureCapture:
             running_mode = VisionRunningMode.LIVE_STREAM,
             result_callback = self.update_guesture_and_call_controller
         )
+        self.recognizer = GestureRecognizer.create_from_options(self.options)
         self.prev_gest = ""
         self.curr_gest = ""
         self.crct_gest = ""
         self.show_output = show_output
+        self.result = ""
 
     def update_guesture_and_call_controller(self, result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
+
+        self.result = result
 
         if(not result.gestures):
             print("NO RESULT")
@@ -49,24 +55,35 @@ class GestureCapture:
     
     def start(self):
 
-        with GestureRecognizer.create_from_options(self.options) as recognizer:
-        
-            while(True): 
+        while(True): 
+            success, frame = self.cap.read() 
+            self.frame_no += 1
+
+            if not success:
+                print("Empty Frame")
+                continue
+
+            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+            self.recognizer.recognize_async(mp_image, self.frame_no)
+
+            if(self.show_output):
+                annotated_image = frame
                 
-                success, frame = self.cap.read() 
-                self.frame_no += 1
-
-                if not success:
-                    print("Empty Frame")
-                    continue
-
-                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-                recognizer.recognize_async(mp_image, self.frame_no)
-
+                if(self.result and len(self.result.hand_landmarks) > 0):
+                    hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+                    hand_landmarks_proto.landmark.extend([
+                        landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in self.result.hand_landmarks[0]
+                    ])
+                    solutions.drawing_utils.draw_landmarks(
+                        annotated_image,
+                        hand_landmarks_proto,
+                        solutions.hands.HAND_CONNECTIONS,
+                        solutions.drawing_styles.get_default_hand_landmarks_style(),
+                        solutions.drawing_styles.get_default_hand_connections_style())
+                            
+                cv2.imshow('Output', annotated_image)
                 if cv2.waitKey(1) & 0xFF == ord('q'): 
                     break
 
-            self.cap.release()     
-            cv2.destroyAllWindows() 
-
-
+        self.cap.release()     
+        cv2.destroyAllWindows()
