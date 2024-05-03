@@ -10,10 +10,18 @@ class Controller:
 
     def stop_yt_video(self):
         keyboard.press_and_release('space')
+        
     def volumeup_video(self):
         pyautogui.press('volumeup')
     def volumedown_video(self):
         pyautogui.press('volumedown')
+        
+    def forward_video(self):
+        pyautogui.press('right')
+    def backward_video(self):
+        pyautogui.press('left')
+        
+        
     def handle(self, gest: Gesture, timestamp: int):
 
         if(timestamp - self.action_timestamp < 40):
@@ -29,6 +37,10 @@ class Controller:
                 self.volumeup_video()
             case Gesture.THUMB_DOWN:
                 self.volumedown_video()
+            case Gesture.POINTING_UP:
+                self.forward_video()
+            case Gesture.VICTORY:
+                self.backward_video()
             case _:
                 print("THIS ACTION DOESN'T EXIST")
         
