@@ -5,6 +5,6 @@ class Gesture(Enum):
     OPEN_PALM = 1
     CLOSED_FIST = 2
     POINTING_UP = 3
-    THUMBS_DOWN = 4
-    THUMBS_UP = 5
+    THUMB_DOWN = 4
+    THUMB_UP = 5
     VICTORY = 6
