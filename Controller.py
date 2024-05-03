@@ -1,5 +1,5 @@
 from Gestures import Gesture
-from pyautogui import press
+import keyboard
 
 class Controller:
 
@@ -8,7 +8,7 @@ class Controller:
         self.action_timestamp = float('-inf')
 
     def stop_yt_video(self):
-        press('space')
+        keyboard.press_and_release('space')
     
     def handle(self, gest: Gesture, timestamp: int):
 
