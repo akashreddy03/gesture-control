@@ -15,7 +15,7 @@ solutions = mp.solutions
 class GestureCapture:
 
     def __init__(self, show_output=False):
-        self.model_path = os.path.abspath('gesture_recognizer.task')
+        self.model_path = os.path.abspath('gesture_recognizer1.task')
         self.cap = cv2.VideoCapture(0)
         self.controller = Controller()
         self.timestamp = 0 
@@ -38,7 +38,7 @@ class GestureCapture:
 
         self.result = result
 
-        if(not result.gestures):
+        if(not result.gestures or not result.gestures[0][0].category_name.upper()):
             print("NO RESULT")
             return
         
