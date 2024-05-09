@@ -23,14 +23,16 @@ class GestureCapture:
         self.options = GestureRecognizerOptions(
             base_options = BaseOptions(model_asset_path=self.model_path),
             running_mode = VisionRunningMode.LIVE_STREAM,
-            result_callback = self.update_guesture_and_call_controller
+            result_callback = self.update_guesture_and_call_controller,
+            num_hands = 2,
         )
         self.recognizer = GestureRecognizer.create_from_options(self.options)
-        self.prev_gest = ""
-        self.curr_gest = ""
-        self.crct_gest = ""
         self.show_output = show_output
-        self.result = ""
+        self.prev_gest = None
+        self.curr_gest = None
+        self.crct_gest = None
+        self.result = None
+        
 
     def update_guesture_and_call_controller(self, result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
 
@@ -69,17 +71,18 @@ class GestureCapture:
             if(self.show_output):
                 annotated_image = frame
                 
-                if(self.result and len(self.result.hand_landmarks) > 0): # type: ignore
-                    hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList() # type: ignore
-                    hand_landmarks_proto.landmark.extend([
-                        landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in self.result.hand_landmarks[0] # type: ignore
-                    ])
-                    solutions.drawing_utils.draw_landmarks( # type: ignore
-                        annotated_image,
-                        hand_landmarks_proto,
-                        solutions.hands.HAND_CONNECTIONS,  # type: ignore
-                        solutions.drawing_styles.get_default_hand_landmarks_style(),  # type: ignore
-                        solutions.drawing_styles.get_default_hand_connections_style()) # type: ignore
+                if(self.result and len(self.result.hand_landmarks) > 0):
+                    for i in self.result.hand_landmarks:
+                        hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+                        hand_landmarks_proto.landmark.extend([
+                            landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in i
+                        ])
+                        solutions.drawing_utils.draw_landmarks(
+                            annotated_image,
+                            hand_landmarks_proto,
+                            solutions.hands.HAND_CONNECTIONS,
+                            solutions.drawing_styles.get_default_hand_landmarks_style(),
+                            solutions.drawing_styles.get_default_hand_connections_style())
                             
                 cv2.imshow('Output', annotated_image)
                 if cv2.waitKey(1) & 0xFF == ord('q'): 

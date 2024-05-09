@@ -1,6 +1,5 @@
 from Gestures import Gesture
 import keyboard
-import pyautogui
 
 class Controller:
 
@@ -12,9 +11,11 @@ class Controller:
         keyboard.press_and_release('space')
         
     def volumeup_video(self):
-        keyboard.press_and_release('volume up')
+        pass
+        # keyboard.press_and_release('volume up')
     def volumedown_video(self):
-        keyboard.press_and_release('volume down')
+        pass
+        # keyboard.press_and_release('volume down')
         
     def forward_video(self):
         keyboard.press_and_release('right')
@@ -43,6 +44,3 @@ class Controller:
                 self.backward_video()
             case _:
                 print("THIS ACTION DOESN'T EXIST")
-        
-
-            
