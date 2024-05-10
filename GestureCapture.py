@@ -18,8 +18,10 @@ class GestureCapture:
     def __init__(self, show_output=False):
         self.model_path = os.path.abspath("gesture_recognizer1.task")
         self.cap = cv2.VideoCapture(0)
+        self.cam_width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        self.cam_height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.controller = Controller()
-        self.timestamp = 0
+        self.gesture_repeat_count = 0
         self.frame_no = 0
         self.options = GestureRecognizerOptions(
             base_options=BaseOptions(model_asset_path=self.model_path),
@@ -41,25 +43,34 @@ class GestureCapture:
 
         self.result = result
 
-        if not result.gestures or not result.gestures[0][0].category_name.upper():
+        if not result.gestures:
             print("NO RESULT")
             return
-        if result.gestures[0][0].category_name.upper() == "NONE":
-            print("NONE")
+
+        if self.controller.distance_capture_mode:
+            self.controller.handle_distance_capture(
+                result.hand_landmarks[0],
+                result.gestures[0][0].category_name.upper(),
+                self.cam_width,
+                self.cam_height,
+                timestamp_ms,
+            )
             return
 
-        self.prev_gest = self.curr_gest
-        self.curr_gest = Gesture[result.gestures[0][0].category_name.upper()]
+        if result.gestures[0][0].category_name.upper():
 
-        if self.prev_gest == self.curr_gest:
-            self.timestamp += 1
-        else:
-            self.timestamp = 0
+            self.prev_gest = self.curr_gest
+            self.curr_gest = Gesture[result.gestures[0][0].category_name.upper()]
 
-        if self.timestamp > 3:
-            self.crct_gest = self.curr_gest
-            self.controller.handle(self.crct_gest, timestamp_ms)
-            print(self.crct_gest.name)
+            if self.prev_gest == self.curr_gest:
+                self.gesture_repeat_count += 1
+            else:
+                self.gesture_repeat_count = 0
+
+            if self.gesture_repeat_count > 3:
+                self.crct_gest = self.curr_gest
+                self.controller.handle(self.crct_gest, timestamp_ms)
+                print(self.crct_gest.name)
 
     # Starts capturing frames from camera, draws handlandmarks if specified and predicts the gesture at each frame
     def start(self):
