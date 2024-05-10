@@ -18,8 +18,6 @@ if platform.system() == "Windows":
     devices = AudioUtilities.GetSpeakers()
     interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
     volume = cast(interface, POINTER(IAudioEndpointVolume))
-    volRange = volume.GetVolumeRange()
-    minVol, maxVol = volRange[0], volRange[1]
 
 # Create instance of PynputController
 keyboard = PynputController()
@@ -51,8 +49,7 @@ class Controller:
     # Sets the system volume to given volume percentage
     def set_volume(self, volper):
         if platform.system() == "Windows":
-            vol = np.interp(volper, [0, 100], [minVol, maxVol])
-            volume.SetMasterVolumeLevel(vol, None)
+            volume.SetMasterVolumeLevelScalar(volper / 100, None)
         elif platform.system() == "Linux":
             subprocess.call(["pactl", "set-sink-volume", "0", str(volper) + "%"])
 
