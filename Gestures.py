@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Gesture(Enum):
     NONE = 0
     OPEN_PALM = 1
